@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Minecraft Server Status</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .status-card {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .online {
+            color: green;
+            font-weight: bold;
+        }
+
+        .offline {
+            color: red;
+            font-weight: bold;
+        }
+
+        .player-list {
+            background-color: #e6ffe6;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 1.1em;
+        }
+
+        .player-list ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        .player-list li {
+            margin-bottom: 5px;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <h1>Minecraft Server Status</h1>
+    <div id="status" class="status-card">Loading...</div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
