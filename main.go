@@ -14,7 +14,7 @@ import (
 )
 
 type ServerStatus struct {
-	Online       string   `json:"online"`
+	Online       bool     `json:"online"`
 	Host         string   `json:"host"`
 	Version      string   `json:"version"`
 	MaxPlayers   int      `json:"max_players"`
@@ -33,28 +33,30 @@ func main() {
 	if serverPort == "" {
 		serverPort = ":8080"
 	}
-
-	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r) // or just do nothing
 	})
-	http.HandleFunc("/", serverStatusHandler)
+	mux.HandleFunc("/api/status", serverStatusHandler)
+	mux.Handle("/", http.FileServer(http.Dir("./public")))
 
 	fmt.Println("Server is running on " + serverPort)
-	log.Fatal(http.ListenAndServe(serverPort, nil))
+	log.Fatal(http.ListenAndServe(serverPort, mux))
 }
 
 func serverStatusHandler(w http.ResponseWriter, r *http.Request) {
-	address := os.Getenv("ADDRESS")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	minecraftAddress := os.Getenv("MINECRAFT_ADDRESS")
 	response := ServerStatus{
-		Host: address,
+		Host: minecraftAddress,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
-	resp, err := status.Modern(ctx, address, 25565)
+	resp, err := status.Modern(ctx, minecraftAddress, 25565)
 	if err != nil {
-		response.Online = "No"
+		response.Online = false
 		fmt.Println("Failed to get server status: " + err.Error())
 	} else {
 
@@ -64,7 +66,7 @@ func serverStatusHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		response.Online = "Yes"
+		response.Online = true
 		response.PlayerOnline = int(*resp.Players.Online)
 		response.MaxPlayers = int(*resp.Players.Max)
 		response.Version = resp.Version.Name.Raw
