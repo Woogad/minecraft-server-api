@@ -24,8 +24,14 @@ type ServerStatus struct {
 
 func main() {
 	err := godotenv.Load()
+
 	if err != nil {
 		log.Fatal("Error loading .env file")
+	}
+
+	serverPort := os.Getenv("SERVERPORT")
+	if serverPort == "" {
+		serverPort = ":8080"
 	}
 
 	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
@@ -33,8 +39,8 @@ func main() {
 	})
 	http.HandleFunc("/", serverStatusHandler)
 
-	fmt.Println("Server is running on :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	fmt.Println("Server is running on " + serverPort)
+	log.Fatal(http.ListenAndServe(serverPort, nil))
 }
 
 func serverStatusHandler(w http.ResponseWriter, r *http.Request) {
